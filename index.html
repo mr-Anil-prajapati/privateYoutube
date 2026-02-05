@@ -2,36 +2,40 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyTube</title>
+<title>Ultra MyTube</title>
 
 <style>
+
 body{
 margin:0;
-font-family:Arial,Helvetica,sans-serif;
 background:#0f0f0f;
 color:white;
+font-family:Arial;
 }
 
-/* Header */
+/* HEADER */
 .header{
 display:flex;
 align-items:center;
 padding:10px 20px;
 background:#181818;
 position:fixed;
-top:0;
 width:100%;
+top:0;
 z-index:10;
 }
+
 .logo{
+color:red;
 font-size:22px;
 font-weight:bold;
-color:red;
 }
+
 .search{
-margin-left:30px;
+margin-left:20px;
 flex:1;
 }
+
 .search input{
 width:60%;
 padding:8px;
@@ -40,125 +44,93 @@ border:1px solid #333;
 color:white;
 }
 
-/* Layout */
+/* LAYOUT */
+
 .container{
 display:flex;
 margin-top:60px;
 }
 
-/* Sidebar */
 .sidebar{
 width:200px;
 background:#181818;
-height:calc(100vh - 60px);
 padding:10px;
+height:calc(100vh - 60px);
 }
+
 .sidebar div{
 padding:10px;
 cursor:pointer;
 }
+
 .sidebar div:hover{
 background:#333;
 }
 
-/* Content */
 .content{
 flex:1;
 padding:20px;
 }
 
-/* Video grid */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
 gap:20px;
 }
 
-/* Card */
 .card{
 cursor:pointer;
 }
-.thumb{
-background:#000;
+
+.thumb img{
+width:100%;
 height:140px;
-display:flex;
-align-items:center;
-justify-content:center;
-color:#888;
-font-size:14px;
-}
-.title{
-margin-top:8px;
-font-weight:bold;
+object-fit:cover;
 }
 
-/* Player */
 .player{
 display:none;
 }
+
 .player iframe{
 width:100%;
 height:480px;
 border:none;
 }
+
 .back{
-margin:10px 0;
-cursor:pointer;
 color:#3ea6ff;
+cursor:pointer;
+margin-bottom:10px;
 }
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div class="logo">MyTube</div>
+<div class="logo">ULTRA MyTube</div>
 <div class="search">
-<input placeholder="Search">
+<input id="search" placeholder="Search videos..." oninput="render()">
 </div>
 </div>
 
 <div class="container">
 
 <div class="sidebar">
-<div>🏠 Home</div>
-<div>🔥 Trending</div>
-<div>📺 Library</div>
+<div onclick="showHome()">🏠 Home</div>
+<div onclick="showHistory()">🕒 History</div>
 </div>
 
 <div class="content">
 
-<!-- HOME -->
-<div id="home" class="grid">
+<div id="home" class="grid"></div>
 
-<div class="card" onclick="play(0)">
-<div class="thumb">Video</div>
-<div class="title">Drive Video 1</div>
-</div>
-
-<div class="card" onclick="play(1)">
-<div class="thumb">Video</div>
-<div class="title">Drive Video 2</div>
-</div>
-
-<div class="card" onclick="play(2)">
-<div class="thumb">Video</div>
-<div class="title">Drive Video 3</div>
-</div>
-
-<div class="card" onclick="play(3)">
-<div class="thumb">Video</div>
-<div class="title">Drive Video 4</div>
-</div>
-
-</div>
-
-<!-- PLAYER -->
 <div id="player" class="player">
-<div class="back" onclick="goHome()">← Back</div>
+<div class="back" onclick="showHome()">← Back</div>
 <iframe id="frame" allow="autoplay" allowfullscreen></iframe>
-<h2 id="vtitle"></h2>
-<p>1.2M views • Channel Name</p>
+<h2 id="title"></h2>
 </div>
 
 </div>
@@ -166,40 +138,86 @@ color:#3ea6ff;
 
 <script>
 
+/* ===== ADD VIDEOS HERE ONLY ===== */
+
 const videos=[
-{
-title:"Drive Video 1",
-src:"https://drive.google.com/file/d/10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45/preview"
-},
-{
-title:"Drive Video 2",
-src:"https://drive.google.com/file/d/1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT/preview"
-},
-{
-title:"Drive Video 3",
-src:"https://drive.google.com/file/d/1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD/preview"
-},
-{
-title:"Drive Video 4",
-src:"https://drive.google.com/file/d/1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF/preview"
-}
+
+{title:"Video 1", id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
+{title:"Video 2", id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
+{title:"Video 3", id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
+{title:"Video 4", id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
+
 ];
 
-function play(i){
-document.getElementById("home").style.display="none";
-document.getElementById("player").style.display="block";
-document.getElementById("frame").src=videos[i].src;
-document.getElementById("vtitle").innerText=videos[i].title;
+/* ===== FUNCTIONS ===== */
+
+function render(list=videos){
+
+let search=document.getElementById("search").value.toLowerCase();
+
+let filtered=list.filter(v=>v.title.toLowerCase().includes(search));
+
+let html="";
+
+filtered.forEach((v,i)=>{
+
+let thumb=`https://drive.google.com/thumbnail?id=${v.id}`;
+
+html+=`
+<div class="card" onclick="play('${v.id}','${v.title}')">
+<div class="thumb">
+<img src="${thumb}">
+</div>
+<div>${v.title}</div>
+</div>
+`;
+
+});
+
+document.getElementById("home").innerHTML=html;
+
 }
 
-function goHome(){
+function play(id,title){
+
+document.getElementById("home").style.display="none";
+document.getElementById("player").style.display="block";
+
+document.getElementById("frame").src=
+`https://drive.google.com/file/d/${id}/preview`;
+
+document.getElementById("title").innerText=title;
+
+/* save history */
+let history=JSON.parse(localStorage.getItem("history")||"[]");
+
+history.unshift({title,id});
+
+localStorage.setItem("history",JSON.stringify(history.slice(0,20)));
+
+}
+
+function showHome(){
+
 document.getElementById("player").style.display="none";
 document.getElementById("home").style.display="grid";
 document.getElementById("frame").src="";
+
 }
+
+function showHistory(){
+
+let history=JSON.parse(localStorage.getItem("history")||"[]");
+
+render(history);
+
+showHome();
+
+}
+
+render();
 
 </script>
 
 </body>
 </html>
-
