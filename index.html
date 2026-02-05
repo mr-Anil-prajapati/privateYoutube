@@ -2,135 +2,170 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Ultra MyTube</title>
+<title>MyTube</title>
 
 <style>
-
+*{box-sizing:border-box}
 body{
 margin:0;
 background:#0f0f0f;
-color:white;
-font-family:Arial;
+color:#fff;
+font-family:Arial,Helvetica,sans-serif;
 }
 
 /* HEADER */
 .header{
+height:56px;
+background:#181818;
 display:flex;
 align-items:center;
-padding:10px 20px;
-background:#181818;
+padding:0 16px;
 position:fixed;
 width:100%;
 top:0;
-z-index:10;
+z-index:100;
 }
-
 .logo{
 color:red;
 font-size:22px;
 font-weight:bold;
+margin-right:20px;
 }
-
-.search{
-margin-left:20px;
-flex:1;
-}
-
 .search input{
-width:60%;
-padding:8px;
+width:400px;
+padding:7px;
 background:#121212;
-border:1px solid #333;
-color:white;
+border:1px solid #303030;
+color:#fff;
 }
 
 /* LAYOUT */
-
-.container{
+.main{
 display:flex;
-margin-top:60px;
+margin-top:56px;
 }
 
+/* SIDEBAR */
 .sidebar{
-width:200px;
+width:220px;
 background:#181818;
+height:calc(100vh - 56px);
 padding:10px;
-height:calc(100vh - 60px);
 }
-
 .sidebar div{
 padding:10px;
 cursor:pointer;
+border-radius:6px;
 }
+.sidebar div:hover{background:#303030}
 
-.sidebar div:hover{
-background:#333;
-}
-
+/* CONTENT */
 .content{
 flex:1;
 padding:20px;
 }
 
+/* HOME GRID */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
 gap:20px;
 }
-
 .card{
 cursor:pointer;
 }
-
 .thumb img{
 width:100%;
-height:140px;
+height:150px;
 object-fit:cover;
+border-radius:10px;
+}
+.title{
+margin-top:8px;
+font-size:14px;
+font-weight:bold;
+color:#eee;
 }
 
-.player{
+/* WATCH PAGE */
+.watch{
 display:none;
 }
-
 .player iframe{
 width:100%;
 height:480px;
 border:none;
+border-radius:12px;
 }
-
+.watch-layout{
+display:flex;
+gap:20px;
+}
+.reco{
+width:360px;
+}
+.reco-item{
+display:flex;
+gap:10px;
+cursor:pointer;
+margin-bottom:10px;
+}
+.reco-item img{
+width:160px;
+height:90px;
+object-fit:cover;
+border-radius:8px;
+}
 .back{
 color:#3ea6ff;
 cursor:pointer;
 margin-bottom:10px;
 }
-
+@media(max-width:900px){
+.watch-layout{flex-direction:column}
+.reco{width:100%}
+.search input{width:200px}
+.sidebar{display:none}
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div class="logo">ULTRA MyTube</div>
+<div class="logo">MyTube</div>
 <div class="search">
-<input id="search" placeholder="Search videos..." oninput="render()">
+<input id="search" placeholder="Search" oninput="renderHome()">
 </div>
 </div>
 
-<div class="container">
+<div class="main">
 
 <div class="sidebar">
-<div onclick="showHome()">🏠 Home</div>
+<div onclick="goHome()">🏠 Home</div>
 <div onclick="showHistory()">🕒 History</div>
 </div>
 
 <div class="content">
 
+<!-- HOME -->
 <div id="home" class="grid"></div>
 
-<div id="player" class="player">
-<div class="back" onclick="showHome()">← Back</div>
+<!-- WATCH -->
+<div id="watch" class="watch">
+<div class="back" onclick="goHome()">← Back</div>
+
+<div class="watch-layout">
+
+<div class="player">
 <iframe id="frame" allow="autoplay" allowfullscreen></iframe>
-<h2 id="title"></h2>
+<h2 id="watchTitle"></h2>
+<p>Private Channel • MyTube</p>
+</div>
+
+<div class="reco" id="reco"></div>
+
+</div>
 </div>
 
 </div>
@@ -138,84 +173,81 @@ margin-bottom:10px;
 
 <script>
 
-/* ===== ADD VIDEOS HERE ONLY ===== */
+/* ===== VIDEO DATA (ONLY EDIT HERE) ===== */
 
 const videos=[
-
-{title:"Video 1", id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
-{title:"Video 2", id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
-{title:"Video 3", id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
-{title:"Video 4", id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
-
+{title:"Drive Video 1",id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
+{title:"Drive Video 2",id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
+{title:"Drive Video 3",id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
+{title:"Drive Video 4",id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
 ];
 
-/* ===== FUNCTIONS ===== */
+/* ===== HOME ===== */
 
-function render(list=videos){
-
-let search=document.getElementById("search").value.toLowerCase();
-
-let filtered=list.filter(v=>v.title.toLowerCase().includes(search));
-
+function renderHome(){
+let q=document.getElementById("search").value.toLowerCase();
 let html="";
-
-filtered.forEach((v,i)=>{
-
-let thumb=`https://drive.google.com/thumbnail?id=${v.id}`;
-
+videos
+.filter(v=>v.title.toLowerCase().includes(q))
+.forEach(v=>{
 html+=`
 <div class="card" onclick="play('${v.id}','${v.title}')">
 <div class="thumb">
-<img src="${thumb}">
+<img src="https://drive.google.com/thumbnail?id=${v.id}">
 </div>
-<div>${v.title}</div>
-</div>
-`;
-
+<div class="title">${v.title}</div>
+</div>`;
 });
-
 document.getElementById("home").innerHTML=html;
-
 }
+
+/* ===== PLAY ===== */
 
 function play(id,title){
 
 document.getElementById("home").style.display="none";
-document.getElementById("player").style.display="block";
+document.getElementById("watch").style.display="block";
 
 document.getElementById("frame").src=
 `https://drive.google.com/file/d/${id}/preview`;
 
-document.getElementById("title").innerText=title;
+document.getElementById("watchTitle").innerText=title;
 
-/* save history */
-let history=JSON.parse(localStorage.getItem("history")||"[]");
+/* history */
+let h=JSON.parse(localStorage.getItem("history")||"[]");
+h.unshift({id,title});
+localStorage.setItem("history",JSON.stringify(h.slice(0,30)));
 
-history.unshift({title,id});
-
-localStorage.setItem("history",JSON.stringify(history.slice(0,20)));
-
+/* recommendations */
+let r="";
+videos.filter(v=>v.id!==id).forEach(v=>{
+r+=`
+<div class="reco-item" onclick="play('${v.id}','${v.title}')">
+<img src="https://drive.google.com/thumbnail?id=${v.id}">
+<div>${v.title}</div>
+</div>`;
+});
+document.getElementById("reco").innerHTML=r;
 }
 
-function showHome(){
+/* ===== NAV ===== */
 
-document.getElementById("player").style.display="none";
+function goHome(){
+document.getElementById("watch").style.display="none";
 document.getElementById("home").style.display="grid";
 document.getElementById("frame").src="";
-
 }
 
 function showHistory(){
-
-let history=JSON.parse(localStorage.getItem("history")||"[]");
-
-render(history);
-
-showHome();
-
+let h=JSON.parse(localStorage.getItem("history")||"[]");
+videos.length=0;
+h.forEach(v=>videos.push(v));
+renderHome();
+goHome();
 }
 
-render();
+/* INIT */
+renderHome();
 
 </script>
 
