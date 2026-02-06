@@ -1,48 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>MyTube Pro</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveTube - Streaming Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<header>
+    <header class="header">
+        <div class="logo-area">
+            <div class="menu-icon">☰</div>
+            <div class="logo">▶ DriveTube</div>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search">
+            <button id="searchBtn">🔍</button>
+        </div>
+        <div class="user-area">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
 
-<img src="images/logo.png" class="logo">
-<input type="text" id="search" placeholder="Search">
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="nav-item active">🏠 Home</div>
+            <div class="nav-item">⚡ Shorts</div>
+            <div class="nav-item">📺 Subscriptions</div>
+            <hr>
+            <div class="nav-item">📚 Library</div>
+            <div class="nav-item">🕒 History</div>
+        </aside>
 
-</header>
+        <main class="content">
+            <section class="video-section">
+                <div class="video-wrapper">
+                    <video id="mainVideo" controls autoplay playsinline>
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="speed-control">
+                        <label>Speed:</label>
+                        <select id="playbackSpeed">
+                            <option value="0.5">0.5x</option>
+                            <option value="1" selected>Normal</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2.0x</option>
+                        </select>
+                    </div>
+                </div>
 
-<div class="container">
+                <div class="video-info">
+                    <h1 id="videoTitle">Loading title...</h1>
+                    <div class="video-stats">
+                        <span>1.2M views • 2 hours ago</span>
+                        <div class="actions">
+                            <button>👍 12K</button>
+                            <button>👎</button>
+                            <button>➡ Share</button>
+                            <button>⬇ Download</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="channel-desc">
+                        <div class="channel-icon">G</div>
+                        <div class="desc-text">
+                            <h4>Google Drive Streamer</h4>
+                            <p>Streaming directly from Drive without the iframe player. Enjoy smooth playback and auto-navigation.</p>
+                        </div>
+                        <button class="subscribe-btn">Subscribe</button>
+                    </div>
+                </div>
+            </section>
 
-<div class="player-area">
+            <aside class="playlist-section">
+                <h3>Up Next</h3>
+                <div id="playlistContainer" class="playlist">
+                    </div>
+            </aside>
+        </main>
+    </div>
 
-<video id="player" controls></video>
-
-<div class="controls">
-
-<button id="nextBtn">Next ▶</button>
-
-<select id="speed">
-<option value="1">1x</option>
-<option value="1.25">1.25x</option>
-<option value="1.5">1.5x</option>
-<option value="2">2x</option>
-</select>
-
-</div>
-
-</div>
-
-<div class="sidebar" id="list"></div>
-
-</div>
-
-<script src="app.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
