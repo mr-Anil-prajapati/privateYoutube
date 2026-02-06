@@ -1,253 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MyTube</title>
+<title>My DriveTube</title>
 
 <style>
-*{box-sizing:border-box}
-body{
-margin:0;
-background:#0f0f0f;
-color:#fff;
-font-family:Arial,Helvetica,sans-serif;
-}
-
-/* HEADER */
-.header{
-height:56px;
-background:#181818;
-display:flex;
-align-items:center;
-padding:0 16px;
-position:fixed;
-width:100%;
-top:0;
-z-index:100;
-}
-.logo{
-color:red;
-font-size:22px;
-font-weight:bold;
-margin-right:20px;
-}
-.search input{
-width:400px;
-padding:7px;
-background:#121212;
-border:1px solid #303030;
-color:#fff;
-}
-
-/* LAYOUT */
-.main{
-display:flex;
-margin-top:56px;
-}
-
-/* SIDEBAR */
-.sidebar{
-width:220px;
-background:#181818;
-height:calc(100vh - 56px);
-padding:10px;
-}
-.sidebar div{
-padding:10px;
-cursor:pointer;
-border-radius:6px;
-}
-.sidebar div:hover{background:#303030}
-
-/* CONTENT */
-.content{
-flex:1;
-padding:20px;
-}
-
-/* HOME GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-gap:20px;
-}
-.card{
-cursor:pointer;
-}
-.thumb img{
-width:100%;
-height:150px;
-object-fit:cover;
-border-radius:10px;
-}
-.title{
-margin-top:8px;
-font-size:14px;
-font-weight:bold;
-color:#eee;
-}
-
-/* WATCH PAGE */
-.watch{
-display:none;
-}
-.player iframe{
-width:100%;
-height:480px;
-border:none;
-border-radius:12px;
-}
-.watch-layout{
-display:flex;
-gap:20px;
-}
-.reco{
-width:360px;
-}
-.reco-item{
-display:flex;
-gap:10px;
-cursor:pointer;
-margin-bottom:10px;
-}
-.reco-item img{
-width:160px;
-height:90px;
-object-fit:cover;
-border-radius:8px;
-}
-.back{
-color:#3ea6ff;
-cursor:pointer;
-margin-bottom:10px;
-}
-@media(max-width:900px){
-.watch-layout{flex-direction:column}
-.reco{width:100%}
-.search input{width:200px}
-.sidebar{display:none}
-}
+body { font-family: Arial; margin: 0; background: #111; color: #fff; }
+.container { display: flex; height: 100vh; }
+.player { flex: 3; padding: 20px; display: flex; flex-direction: column; }
+iframe { width: 100%; height: 500px; border-radius: 8px; border:none;}
+button { padding: 8px 16px; border: none; border-radius: 6px; background: #ff0000; color: #fff; cursor: pointer; margin-right: 10px; }
+.sidebar { flex: 1; background: #222; overflow-y: auto; padding: 10px; }
+.search-bar { width: 100%; padding: 8px; border: none; border-radius: 6px; background: #333; color: #fff; margin-bottom: 10px; }
+.video-item { margin-bottom: 10px; cursor: pointer; padding: 5px; border-radius: 6px; transition: 0.2s; }
+.video-item:hover { background: #333; }
+.video-item.active { border: 2px solid #ff0000; }
+.video-item img { width:100%; border-radius:6px; }
+.video-item span { display: block; text-align: center; margin-top: 4px; font-size: 14px; }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-<div class="logo">MyTube</div>
-<div class="search">
-<input id="search" placeholder="Search" oninput="renderHome()">
-</div>
-</div>
-
-<div class="main">
-
-<div class="sidebar">
-<div onclick="goHome()">🏠 Home</div>
-<div onclick="showHistory()">🕒 History</div>
-</div>
-
-<div class="content">
-
-<!-- HOME -->
-<div id="home" class="grid"></div>
-
-<!-- WATCH -->
-<div id="watch" class="watch">
-<div class="back" onclick="goHome()">← Back</div>
-
-<div class="watch-layout">
+<div class="container">
 
 <div class="player">
-<iframe id="frame" allow="autoplay" allowfullscreen></iframe>
-<h2 id="watchTitle"></h2>
-<p>Private Channel • MyTube</p>
-</div>
-
-<div class="reco" id="reco"></div>
-
+<iframe id="mainPlayer" allow="autoplay" allowfullscreen></iframe>
+<div>
+<button id="nextBtn">Next ▶</button>
 </div>
 </div>
 
+<div class="sidebar">
+<input type="text" id="search" class="search-bar" placeholder="Search videos...">
+<div id="sidebar"></div>
 </div>
+
 </div>
 
 <script>
 
-/* ===== VIDEO DATA (ONLY EDIT HERE) ===== */
+const sidebar = document.getElementById("sidebar");
+const mainPlayer = document.getElementById("mainPlayer");
+const search = document.getElementById("search");
 
-const videos=[
-{title:"Drive Video 1",id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
-{title:"Drive Video 2",id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
-{title:"Drive Video 3",id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
-{title:"Drive Video 4",id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
+let currentIndex = 0;
+
+/* ===== ADD DRIVE VIDEOS HERE ===== */
+
+const videos = [
+
+{title:"Video 1", id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
+{title:"Video 2", id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
+{title:"Video 3", id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
+{title:"Video 4", id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
+
 ];
 
-/* ===== HOME ===== */
+/* ===== CREATE SIDEBAR ===== */
 
-function renderHome(){
-let q=document.getElementById("search").value.toLowerCase();
-let html="";
-videos
-.filter(v=>v.title.toLowerCase().includes(q))
-.forEach(v=>{
-html+=`
-<div class="card" onclick="play('${v.id}','${v.title}')">
-<div class="thumb">
+function loadSidebar(){
+
+sidebar.innerHTML="";
+
+videos.forEach((v,i)=>{
+
+const item=document.createElement("div");
+item.className="video-item";
+
+item.innerHTML=`
 <img src="https://drive.google.com/thumbnail?id=${v.id}">
-</div>
-<div class="title">${v.title}</div>
-</div>`;
+<span>${v.title}</span>
+`;
+
+item.onclick=()=>playVideo(i);
+
+sidebar.appendChild(item);
+
 });
-document.getElementById("home").innerHTML=html;
+
+highlightActive(0);
+
 }
 
-/* ===== PLAY ===== */
+/* ===== PLAY VIDEO ===== */
 
-function play(id,title){
+function playVideo(i){
 
-document.getElementById("home").style.display="none";
-document.getElementById("watch").style.display="block";
+currentIndex=i;
 
-document.getElementById("frame").src=
-`https://drive.google.com/file/d/${id}/preview`;
+mainPlayer.src=`https://drive.google.com/file/d/${videos[i].id}/preview`;
 
-document.getElementById("watchTitle").innerText=title;
+highlightActive(i);
 
-/* history */
-let h=JSON.parse(localStorage.getItem("history")||"[]");
-h.unshift({id,title});
-localStorage.setItem("history",JSON.stringify(h.slice(0,30)));
+}
 
-/* recommendations */
-let r="";
-videos.filter(v=>v.id!==id).forEach(v=>{
-r+=`
-<div class="reco-item" onclick="play('${v.id}','${v.title}')">
-<img src="https://drive.google.com/thumbnail?id=${v.id}">
-<div>${v.title}</div>
-</div>`;
+function highlightActive(i){
+
+document.querySelectorAll(".video-item").forEach((el,idx)=>{
+el.classList.toggle("active",idx===i);
 });
-document.getElementById("reco").innerHTML=r;
+
 }
 
-/* ===== NAV ===== */
+/* NEXT BUTTON */
 
-function goHome(){
-document.getElementById("watch").style.display="none";
-document.getElementById("home").style.display="grid";
-document.getElementById("frame").src="";
-}
+document.getElementById("nextBtn").onclick=()=>{
 
-function showHistory(){
-let h=JSON.parse(localStorage.getItem("history")||"[]");
-videos.length=0;
-h.forEach(v=>videos.push(v));
-renderHome();
-goHome();
-}
+currentIndex=(currentIndex+1)%videos.length;
 
-/* INIT */
-renderHome();
+playVideo(currentIndex);
+
+};
+
+/* SEARCH */
+
+search.oninput=()=>{
+
+const term=search.value.toLowerCase();
+
+document.querySelectorAll(".video-item").forEach(item=>{
+item.style.display=item.textContent.toLowerCase().includes(term)?"":"none";
+});
+
+};
+
+loadSidebar();
+playVideo(0);
 
 </script>
 
