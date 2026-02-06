@@ -1,134 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>My DriveTube</title>
+<title>MyTube Pro</title>
 
-<style>
-body { font-family: Arial; margin: 0; background: #111; color: #fff; }
-.container { display: flex; height: 100vh; }
-.player { flex: 3; padding: 20px; display: flex; flex-direction: column; }
-iframe { width: 100%; height: 500px; border-radius: 8px; border:none;}
-button { padding: 8px 16px; border: none; border-radius: 6px; background: #ff0000; color: #fff; cursor: pointer; margin-right: 10px; }
-.sidebar { flex: 1; background: #222; overflow-y: auto; padding: 10px; }
-.search-bar { width: 100%; padding: 8px; border: none; border-radius: 6px; background: #333; color: #fff; margin-bottom: 10px; }
-.video-item { margin-bottom: 10px; cursor: pointer; padding: 5px; border-radius: 6px; transition: 0.2s; }
-.video-item:hover { background: #333; }
-.video-item.active { border: 2px solid #ff0000; }
-.video-item img { width:100%; border-radius:6px; }
-.video-item span { display: block; text-align: center; margin-top: 4px; font-size: 14px; }
-</style>
+<link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
+<header>
+
+<img src="images/logo.png" class="logo">
+<input type="text" id="search" placeholder="Search">
+
+</header>
+
 <div class="container">
 
-<div class="player">
-<iframe id="mainPlayer" allow="autoplay" allowfullscreen></iframe>
-<div>
+<div class="player-area">
+
+<video id="player" controls></video>
+
+<div class="controls">
+
 <button id="nextBtn">Next ▶</button>
+
+<select id="speed">
+<option value="1">1x</option>
+<option value="1.25">1.25x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
+
 </div>
-</div>
-
-<div class="sidebar">
-<input type="text" id="search" class="search-bar" placeholder="Search videos...">
-<div id="sidebar"></div>
-</div>
 
 </div>
 
-<script>
+<div class="sidebar" id="list"></div>
 
-const sidebar = document.getElementById("sidebar");
-const mainPlayer = document.getElementById("mainPlayer");
-const search = document.getElementById("search");
+</div>
 
-let currentIndex = 0;
-
-/* ===== ADD DRIVE VIDEOS HERE ===== */
-
-const videos = [
-
-{title:"Video 1", id:"10TolCt3cCNhbfbnRqfOp8dcRu2vnTz45"},
-{title:"Video 2", id:"1FVz-Y-jnOrFiQFTurRoZ5VS_zObhSdQT"},
-{title:"Video 3", id:"1l2_iT7GoXs8Solhtk_SZOAnxvKQ-q6RD"},
-{title:"Video 4", id:"1eiclMj2CN2MUTYgOUsYn3UXOF4kV0TlF"}
-
-];
-
-/* ===== CREATE SIDEBAR ===== */
-
-function loadSidebar(){
-
-sidebar.innerHTML="";
-
-videos.forEach((v,i)=>{
-
-const item=document.createElement("div");
-item.className="video-item";
-
-item.innerHTML=`
-<img src="https://drive.google.com/thumbnail?id=${v.id}">
-<span>${v.title}</span>
-`;
-
-item.onclick=()=>playVideo(i);
-
-sidebar.appendChild(item);
-
-});
-
-highlightActive(0);
-
-}
-
-/* ===== PLAY VIDEO ===== */
-
-function playVideo(i){
-
-currentIndex=i;
-
-mainPlayer.src=`https://drive.google.com/file/d/${videos[i].id}/preview`;
-
-highlightActive(i);
-
-}
-
-function highlightActive(i){
-
-document.querySelectorAll(".video-item").forEach((el,idx)=>{
-el.classList.toggle("active",idx===i);
-});
-
-}
-
-/* NEXT BUTTON */
-
-document.getElementById("nextBtn").onclick=()=>{
-
-currentIndex=(currentIndex+1)%videos.length;
-
-playVideo(currentIndex);
-
-};
-
-/* SEARCH */
-
-search.oninput=()=>{
-
-const term=search.value.toLowerCase();
-
-document.querySelectorAll(".video-item").forEach(item=>{
-item.style.display=item.textContent.toLowerCase().includes(term)?"":"none";
-});
-
-};
-
-loadSidebar();
-playVideo(0);
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
