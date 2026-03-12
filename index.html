@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Video Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎬 My Video Library</h1>
+    </header>
+    
+    <main>
+        <div class="player-section" id="playerSection" style="display: none;">
+            <video id="videoPlayer" controls width="100%">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 id="videoTitle"></h2>
+            <button onclick="closePlayer()">✕ Close Player</button>
+        </div>
+        
+        <div class="video-grid" id="videoGrid">
+            <!-- Videos will be loaded dynamically -->
+        </div>
+    </main>
+    
+    <footer>
+        <p>Powered by Dropbox + GitHub Pages</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
