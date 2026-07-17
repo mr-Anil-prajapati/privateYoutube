@@ -93,7 +93,7 @@ async function fetchDropboxFolderContents() {
     const firstPage = await dropboxApiRequest('https://api.dropboxapi.com/2/sharing/list_shared_link_files', {
         url: sharedFolderUrl,
         path: '',
-        recursive: false
+        recursive: true
     });
 
     const entries = [...firstPage.entries];
@@ -276,6 +276,24 @@ function closePlayer() {
     playerModal.classList.add('hidden');
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+}
+
+/**
+ * Validate the Dropbox configuration values from config.js.
+ */
+function validateConfig() {
+    const missingToken = !DROPBOX_ACCESS_TOKEN || DROPBOX_ACCESS_TOKEN === 'YOUR_ACCESS_TOKEN';
+    const missingFolder = !DROPBOX_FOLDER || DROPBOX_FOLDER.includes('YOUR_DROPBOX_FOLDER');
+
+    if (missingToken || missingFolder) {
+        if (missingToken) {
+            summaryText.textContent = 'Configure DROPBOX_ACCESS_TOKEN in config.js to load videos.';
+        } else {
+            summaryText.textContent = 'Configure DROPBOX_FOLDER in config.js to load videos.';
+        }
+        emptyState.classList.remove('hidden');
+        throw new Error('Missing Dropbox configuration.');
+    }
 }
 
 /**
