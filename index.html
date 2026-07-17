@@ -3,33 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Video Library</title>
+    <title>Dropbox Video Library</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>🎬 My Video Library</h1>
+    <header class="app-header">
+        <div class="brand">
+            <span class="brand-icon">▶</span>
+            <div>
+                <h1>Dropbox Video Library</h1>
+                <p>Automatic Dropbox folder video browser</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <label for="searchInput" class="sr-only">Search videos</label>
+                <input id="searchInput" type="search" placeholder="Search videos..." autocomplete="off">
+            </div>
+            <div class="sort-box">
+                <label for="sortSelect" class="sr-only">Sort videos</label>
+                <select id="sortSelect" aria-label="Sort videos">
+                    <option value="name_asc">Name ▲</option>
+                    <option value="name_desc">Name ▼</option>
+                    <option value="date_desc">Date ▲</option>
+                    <option value="date_asc">Date ▼</option>
+                    <option value="size_desc">Size ▲</option>
+                    <option value="size_asc">Size ▼</option>
+                </select>
+            </div>
+        </div>
     </header>
-    
-    <main>
-        <div class="player-section" id="playerSection" style="display: none;">
-            <video id="videoPlayer" controls width="100%">
-                <source src="" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <h2 id="videoTitle"></h2>
-            <button onclick="closePlayer()">✕ Close Player</button>
+
+    <main class="app-main">
+        <section class="hero-card">
+            <div>
+                <h2>Play every supported Dropbox video from one shared folder.</h2>
+                <p>Search, sort, and stream directly in a modern responsive UI.</p>
+            </div>
+        </section>
+
+        <div class="status-bar">
+            <p id="summaryText">Loading videos...</p>
         </div>
-        
-        <div class="video-grid" id="videoGrid">
-            <!-- Videos will be loaded dynamically -->
+
+        <section class="video-grid" id="videoGrid"></section>
+
+        <div class="empty-state hidden" id="emptyState">
+            <span>😕</span>
+            <p>No videos found</p>
+            <small>Try a different search or check the Dropbox folder.</small>
         </div>
+
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Loading files from Dropbox…</p>
+        </div>
+
+        <div id="scrollSentinel" class="scroll-sentinel"></div>
     </main>
-    
-    <footer>
-        <p>Powered by Dropbox + GitHub Pages</p>
+
+    <div class="player-modal hidden" id="playerModal" aria-hidden="true">
+        <div class="player-shell">
+            <button class="close-button" id="closePlayer" aria-label="Close player">✕</button>
+            <div class="player-header">
+                <div>
+                    <h3 id="playerTitle">Loading video...</h3>
+                    <p id="playerMeta"></p>
+                </div>
+            </div>
+            <video id="playerVideo" controls playsinline preload="metadata"></video>
+            <div class="player-footer">
+                <button id="stopPlayer">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>Ready for GitHub Pages • Dropbox API powered</p>
     </footer>
-    
-    <script src="script.js"></script>
+
+    <script src="config.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

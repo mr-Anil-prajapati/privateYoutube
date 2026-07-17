@@ -1,12 +1,14 @@
-/* Dark Theme - YouTube-like */
 :root {
-    --bg-primary: #0f0f0f;
-    --bg-secondary: #1f1f1f;
-    --bg-hover: #303030;
-    --text-primary: #ffffff;
-    --text-secondary: #aaaaaa;
-    --accent: #ff0000;
-    --accent-hover: #cc0000;
+    --bg-primary: #060607;
+    --bg-surface: #111315;
+    --bg-panel: rgba(20, 24, 32, 0.92);
+    --text-primary: #f7f8fb;
+    --text-secondary: #a3a9b5;
+    --text-muted: #6f7482;
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #e50914;
+    --accent-soft: rgba(229, 9, 20, 0.18);
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -15,130 +17,407 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
+html, body {
+    min-height: 100%;
 }
 
-header {
-    background-color: var(--bg-secondary);
-    padding: 20px;
-    text-align: center;
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+img, video {
+    max-width: 100%;
+    display: block;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    border: none;
+    background: none;
+    color: inherit;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.app-header {
     position: sticky;
     top: 0;
-    z-index: 100;
-    border-bottom: 1px solid #333;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 24px 32px;
+    background: rgba(6, 6, 7, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px);
 }
 
-header h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-main {
-    max-width: 1200px;
+.brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.35rem;
+}
+
+.brand h1 {
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    letter-spacing: -0.04em;
+}
+
+.brand p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: min(100%, 560px);
+    justify-content: flex-end;
+}
+
+.search-box,
+.sort-box {
+    width: 100%;
+}
+
+.search-box input,
+.sort-box select {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(20, 24, 32, 0.95);
+    color: var(--text-primary);
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-box input:focus,
+.sort-box select:focus {
+    border-color: rgba(229, 9, 20, 0.55);
+    box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.12);
+}
+
+.app-main {
+    max-width: 1360px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 28px 32px 48px;
 }
 
-/* Player Section */
-.player-section {
-    background-color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
+.hero-card {
+    padding: 28px 32px;
+    border-radius: 30px;
+    background: rgba(18, 22, 30, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow);
+    margin-bottom: 26px;
 }
 
-.player-section video {
-    border-radius: 8px;
-    background-color: #000;
+.hero-card h2 {
+    font-size: clamp(1.75rem, 3vw, 2.8rem);
+    margin-bottom: 10px;
 }
 
-.player-section h2 {
-    margin: 15px 0;
-    font-size: 1.3rem;
-}
-
-.player-section button {
-    background-color: var(--accent);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
+.hero-card p {
+    color: var(--text-muted);
+    max-width: 720px;
     font-size: 1rem;
-    transition: background-color 0.3s;
 }
 
-.player-section button:hover {
-    background-color: var(--accent-hover);
+.status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 14px 18px;
+    border-radius: 18px;
+    background: rgba(16, 20, 26, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
 }
 
-/* Video Grid */
+.status-bar p {
+    color: var(--text-secondary);
+    font-size: 0.97rem;
+}
+
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
 }
 
 .video-card {
-    background-color: var(--bg-secondary);
-    border-radius: 12px;
+    background: rgba(17, 21, 28, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 22px;
     overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .video-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border-color: rgba(229, 9, 20, 0.45);
+    box-shadow: var(--shadow);
 }
 
-.video-thumbnail {
+.video-card-button {
+    display: grid;
+    grid-template-rows: 180px auto;
     width: 100%;
-    height: 160px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+}
+
+.video-thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    background: linear-gradient(180deg, rgba(229, 9, 20, 0.18), rgba(5, 6, 8, 0.98));
+}
+
+.video-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+}
+
+.preview-icon {
     font-size: 3rem;
+    opacity: 0.85;
 }
 
 .video-info {
-    padding: 12px;
+    padding: 18px 18px 20px;
 }
 
-.video-title {
+.video-info h3 {
     font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.video-duration {
-    font-size: 0.85rem;
+.video-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     color: var(--text-secondary);
+    font-size: 0.92rem;
 }
 
-footer {
+.video-meta span {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 999px;
+    padding: 6px 10px;
+}
+
+.empty-state {
+    margin: 56px auto 0;
+    padding: 42px 32px;
+    max-width: 520px;
     text-align: center;
-    padding: 20px;
+    border-radius: 24px;
+    background: rgba(18, 22, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     color: var(--text-secondary);
-    margin-top: 40px;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    header h1 {
-        font-size: 1.4rem;
+.empty-state span {
+    display: inline-flex;
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-state p {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.empty-state small {
+    color: var(--text-muted);
+}
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 18px;
+    background: rgba(4, 6, 9, 0.82);
+    backdrop-filter: blur(10px);
+    z-index: 90;
+    padding: 24px;
+}
+
+.spinner {
+    width: 72px;
+    height: 72px;
+    border: 8px solid rgba(255, 255, 255, 0.08);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.player-modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(3, 4, 7, 0.92);
+    z-index: 100;
+    padding: 24px;
+}
+
+.player-shell {
+    width: min(980px, 100%);
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(15, 17, 22, 0.98), rgba(8, 9, 13, 0.99));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.close-button {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: rgba(12, 14, 19, 0.95);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.player-header {
+    padding: 24px 24px 0;
+}
+
+.player-header h3 {
+    margin-bottom: 8px;
+    font-size: 1.55rem;
+}
+
+.player-header p {
+    color: var(--text-secondary);
+}
+
+#playerVideo {
+    width: 100%;
+    min-height: 390px;
+    background: #000;
+}
+
+.player-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 18px 24px 24px;
+}
+
+.player-footer button {
+    padding: 12px 22px;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+}
+
+.app-footer {
+    text-align: center;
+    padding: 18px 32px 40px;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+    .app-header {
+        padding: 20px;
     }
-    
+
+    .controls {
+        width: 100%;
+        justify-content: stretch;
+    }
+
     .video-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    .app-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .hero-card {
+        padding: 24px;
+    }
+
+    .status-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .video-card-button {
+        grid-template-rows: 160px auto;
+    }
+
+    .player-footer {
+        justify-content: center;
     }
 }
